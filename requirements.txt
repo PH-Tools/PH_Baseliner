@@ -1,2 +1,3 @@
+pydantic
 ph_units>=1.1.0
 PHX
