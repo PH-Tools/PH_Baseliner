@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# -*- Python Version: 3.11 -*-
+# -*- Python Version: 3.7 -*-
 
 """Data model of the Baseline Building Code."""
 
 from pydantic import BaseModel, validator
-from typing import Dict, Self
+from typing import Dict
 
 from ph_units.converter import convert
 
@@ -16,7 +16,7 @@ class TableMaximumUFactor_Values(BaseModel):
     all_other: float
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumUFactor_Values", **kwargs):
         for field in v.__fields__:
             val = getattr(v, field)
             val = convert(val, kwargs["units"], "W/m2K")
@@ -29,7 +29,7 @@ class TableMaximumCFactor_Values(BaseModel):
     all_other: float
     
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumCFactor_Values", **kwargs):
         for field in v.__fields__:
             val = getattr(v, field)
             val = convert(val, kwargs["units"], "W/m2K")
@@ -42,7 +42,7 @@ class TableMaximumFFactor_Values(BaseModel):
     all_other: float
     
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumFFactor_Values", **kwargs):
         for field in v.__fields__:
             val = getattr(v, field)
             val = convert(val, kwargs["units"], "W/m2K")
@@ -55,7 +55,7 @@ class TableMaximumSHGC_Values(BaseModel):
     all_other: float
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumSHGC_Values", **kwargs):
         return v
     
 
@@ -68,7 +68,7 @@ class TableMaximumUFactor_ClimateZones(BaseModel):
     CZ6: TableMaximumUFactor_Values
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumUFactor_ClimateZones", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -81,7 +81,7 @@ class TableMaximumCFactor_ClimateZones(BaseModel):
     CZ6: TableMaximumCFactor_Values
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumCFactor_ClimateZones", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -94,7 +94,7 @@ class TableMaximumFFactor_ClimateZones(BaseModel):
     CZ6: TableMaximumFFactor_Values
     
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumFFactor_ClimateZones", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -107,7 +107,7 @@ class TableMaximumSHGC_ClimateZones(BaseModel):
     CZ6: TableMaximumSHGC_Values
     
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumSHGC_ClimateZones", **kwargs):
         return v
 
 
@@ -120,7 +120,7 @@ class TableMaximumUFactorRoofs(BaseModel):
     attic_and_other: TableMaximumUFactor_ClimateZones
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumUFactorRoofs", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -135,7 +135,7 @@ class TableMaximumUFactorWalls(BaseModel):
     below_grade: TableMaximumCFactor_ClimateZones
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumUFactorWalls", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -149,7 +149,7 @@ class TableMaximumUFactorFloors(BaseModel):
     heated_slab: TableMaximumUFactor_ClimateZones
 
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumUFactorFloors", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -161,7 +161,7 @@ class TableMaximumUFactorFenestration(BaseModel):
     shgc: TableMaximumSHGC_ClimateZones
     
     @classmethod
-    def convert_units(cls, v: Self, **kwargs):
+    def convert_units(cls, v: "TableMaximumUFactorFenestration", **kwargs):
         for field_name in v.__fields__:
             field_type = getattr(v, field_name)
             field_type.convert_units(field_type, **kwargs)
@@ -181,7 +181,7 @@ class TableEnvelopeMaximumUFactors(BaseModel):
 
     @validator("roofs", "walls", "floors", pre=False)
     @classmethod
-    def convert_units(cls, v: Self, values: Dict):
+    def convert_units(cls, v: "TableEnvelopeMaximumUFactors", values: Dict):
         return type(v).convert_units(v, **values)
 
 
@@ -196,7 +196,7 @@ class TableFenestrationMaximumUFactors(BaseModel):
     
     @validator("fixed_windows", "operable_windows", "entrance_doors", "skylights", pre=False)
     @classmethod
-    def convert_units(cls, v: Self, values: Dict):
+    def convert_units(cls, v: "TableFenestrationMaximumUFactors", values: Dict):
         return type(v).convert_units(v, **values)
 
 
