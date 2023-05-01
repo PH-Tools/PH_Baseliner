@@ -1,4 +1,4 @@
-recursive-include ph_units *
+recursive-include ph_baseliner *
 recursive-exclude tests *
 recursive-exclude htmlcov *
 exclude .gitignore
