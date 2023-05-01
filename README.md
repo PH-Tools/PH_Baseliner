@@ -15,7 +15,7 @@ a desired code-minimum configuration.
 >>> # --- Load the Code baseline model you would like to follow.
 >>> import pathlib
 >>> from ph_baseliner.codes.model import BaselineCode
->>> baseline_code_file_path = pathlib.Path("./ph_baseliner/codes/2020_ECCCNY.json")
+>>> baseline_code_file_path = pathlib.Path(".", "ph_baseliner", "codes", "2020_ECCCNY.json")
 >>> _baseline_code = BaselineCode.parse_file(baseline_code_file_path)
 >>> 
 >>> # --- Set the PHPP values as desired in the various Worksheets
