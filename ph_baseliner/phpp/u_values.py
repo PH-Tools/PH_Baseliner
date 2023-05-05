@@ -10,11 +10,12 @@ from PHX.PHPP import phpp_app
 from PHX.model.constructions import PhxConstructionOpaque
 
 from ph_baseliner.codes.model import BaselineCode
-from ph_baseliner.codes.options import ClimateZones
+from ph_baseliner.codes.options import ClimateZones, Use_Groups
 
 
 class BaselinePHXConstructions(NamedTuple):
     """NamedTuple: The baseline PHX constructions for the PHPP U-Values Worksheet."""
+
     roof: PhxConstructionOpaque
     exposed_wall: PhxConstructionOpaque
     ground_wall: PhxConstructionOpaque
@@ -24,6 +25,7 @@ class BaselinePHXConstructions(NamedTuple):
 
 class BaselineConstructionPHPPids(NamedTuple):
     """NamedTuple: Output of the add_baseline_constructions_to_phpp function."""
+
     roof: str
     exposed_wall: str
     ground_wall: str
@@ -32,35 +34,38 @@ class BaselineConstructionPHPPids(NamedTuple):
 
 
 def create_baseline_constructions(
-        baseline_code: BaselineCode,
-        climate_zone: ClimateZones,
+    baseline_code: BaselineCode, climate_zone: ClimateZones, use_group: Use_Groups
 ) -> BaselinePHXConstructions:
     """Create the baseline constructions from the code baseline model."""
-    table_max_u_values = baseline_code.tables.maximum_u_factors
-    
-    roof_u_values = getattr(table_max_u_values.roofs.insulation_above_deck, climate_zone.name)
+
+    # -- Roofs
     new_roof_phx_construction = PhxConstructionOpaque.from_total_u_value(
-        roof_u_values.group_r, "BASELINE: ROOF"
+        baseline_code.get_baseline_roof_u_value(climate_zone, use_group),
+        "BASELINE: ROOF",
     )
 
-    exposed_wall_u_values = getattr(table_max_u_values.walls.mass, climate_zone.name)
+    # -- Exposed Walls (Above Grade)
     new_exposed_wall_phx_construction = PhxConstructionOpaque.from_total_u_value(
-        exposed_wall_u_values.group_r, "BASELINE: EXPOSED WALL"
+        baseline_code.get_baseline_exposed_wall_u_value(climate_zone, use_group),
+        "BASELINE: EXPOSED WALL",
     )
 
-    ground_wall_u_values = getattr(table_max_u_values.walls.below_grade, climate_zone.name)
+    # -- Ground Walls (Below Grade)
     new_ground_wall_phx_construction = PhxConstructionOpaque.from_total_u_value(
-        ground_wall_u_values.group_r, "BASELINE: GROUND WALL"
+        baseline_code.get_baseline_ground_wall_c_factor(climate_zone, use_group),
+        "BASELINE: GROUND WALL",
     )
 
-    exposed_floor_u_values = getattr(table_max_u_values.floors.mass, climate_zone.name)
+    # -- Exposed Floors
     new_exposed_floor_phx_construction = PhxConstructionOpaque.from_total_u_value(
-        exposed_floor_u_values.group_r, "BASELINE: EXPOSED FLOOR"
+        baseline_code.get_baseline_exposed_floor_u_value(climate_zone, use_group),
+        "BASELINE: EXPOSED FLOOR",
     )
-    
-    ground_floor_u_values = getattr(table_max_u_values.floors.unheated_slab, climate_zone.name)
+
+    # -- Ground Floors
     new_ground_floor_phx_construction = PhxConstructionOpaque.from_total_u_value(
-        ground_floor_u_values.group_r,"BASELINE: GROUND FLOOR"
+        baseline_code.get_baseline_ground_floor_f_factor(climate_zone, use_group),
+        "BASELINE: GROUND FLOOR",
     )
 
     return BaselinePHXConstructions(
@@ -71,17 +76,39 @@ def create_baseline_constructions(
         new_ground_floor_phx_construction,
     )
 
-def add_baseline_constructions_to_phpp(phpp_conn: phpp_app.PHPPConnection, baseline_constructions: BaselinePHXConstructions) -> BaselineConstructionPHPPids:
+
+def add_baseline_constructions_to_phpp(
+    phpp_conn: phpp_app.PHPPConnection, baseline_constructions: BaselinePHXConstructions
+) -> BaselineConstructionPHPPids:
     """Add the baseline constructions to the PHPP U-Values Worksheet."""
-    roof_phpp_id = phpp_conn.u_values.add_new_phx_construction(baseline_constructions.roof)
-    exposed_wall_phpp_id = phpp_conn.u_values.add_new_phx_construction(baseline_constructions.exposed_wall)
-    ground_wall_phpp_id = phpp_conn.u_values.add_new_phx_construction(baseline_constructions.ground_wall)
-    exposed_floor_phpp_id = phpp_conn.u_values.add_new_phx_construction(baseline_constructions.exposed_floor)
-    ground_floor_phpp_id = phpp_conn.u_values.add_new_phx_construction(baseline_constructions.ground_floor)
+    roof_phpp_id = phpp_conn.u_values.add_new_phx_construction(
+        baseline_constructions.roof
+    )
+    exposed_wall_phpp_id = phpp_conn.u_values.add_new_phx_construction(
+        baseline_constructions.exposed_wall
+    )
+    ground_wall_phpp_id = phpp_conn.u_values.add_new_phx_construction(
+        baseline_constructions.ground_wall
+    )
+    exposed_floor_phpp_id = phpp_conn.u_values.add_new_phx_construction(
+        baseline_constructions.exposed_floor
+    )
+    ground_floor_phpp_id = phpp_conn.u_values.add_new_phx_construction(
+        baseline_constructions.ground_floor
+    )
 
-    return BaselineConstructionPHPPids(roof_phpp_id, exposed_wall_phpp_id, ground_wall_phpp_id, exposed_floor_phpp_id, ground_floor_phpp_id)
+    return BaselineConstructionPHPPids(
+        roof_phpp_id,
+        exposed_wall_phpp_id,
+        ground_wall_phpp_id,
+        exposed_floor_phpp_id,
+        ground_floor_phpp_id,
+    )
 
-def replace_u_values_with_baseline_constructions(phpp_conn: phpp_app.PHPPConnection, baseline_constructions: BaselinePHXConstructions) -> None:
+
+def replace_u_values_with_baseline_constructions(
+    phpp_conn: phpp_app.PHPPConnection, baseline_constructions: BaselinePHXConstructions
+) -> None:
     """Replace the existing U-Values with the baseline constructions."""
 
     def is_roof(_input: str):
@@ -104,7 +131,7 @@ def replace_u_values_with_baseline_constructions(phpp_conn: phpp_app.PHPPConnect
         constructor_name = phpp_conn.u_values.get_constructor_name(row_num)
         r_si_type = phpp_conn.u_values.get_constructor_r_si_type(row_num)
         r_se_type = phpp_conn.u_values.get_constructor_r_se_type(row_num)
-        
+
         if is_roof(r_si_type):
             _phx_const = copy(baseline_constructions.roof)
         elif is_wall(r_si_type) and is_below_grade(r_se_type):
@@ -119,7 +146,7 @@ def replace_u_values_with_baseline_constructions(phpp_conn: phpp_app.PHPPConnect
             continue
 
         _phx_const.display_name = constructor_name
-        
+
         # -- Update the PHPP
         phpp_conn.u_values.clear_single_constructor_data(row_num, False)
         phpp_conn.u_values.write_single_PHX_construction(_phx_const, row_num)

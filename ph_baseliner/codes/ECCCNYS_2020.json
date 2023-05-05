@@ -206,16 +206,19 @@
                 },
                 "shgc": {
                     "CZ4": {
-                        "group_r": 0.43,
-                        "all_other": 0.43
+                        "pf_under_20": 0.36,
+                        "pf_20_to_50": 0.43,
+                        "pf_over_50": 0.58
                     },
                     "CZ5": {
-                        "group_r": 0.46,
-                        "all_other": 0.46
+                        "pf_under_20": 0.38,
+                        "pf_20_to_50": 0.46,
+                        "pf_over_50": 0.48
                     },
                     "CZ6": {
-                        "group_r": 0.48,
-                        "all_other": 0.48
+                        "pf_under_20": 0.40,
+                        "pf_20_to_50": 0.48,
+                        "pf_over_50": 0.64
                     }
                 }
             },
@@ -236,16 +239,19 @@
                 },
                 "shgc": {
                     "CZ4": {
-                        "group_r": 0.43,
-                        "all_other": 0.43
+                        "pf_under_20": 0.36,
+                        "pf_20_to_50": 0.43,
+                        "pf_over_50": 0.58
                     },
                     "CZ5": {
-                        "group_r": 0.46,
-                        "all_other": 0.46
+                        "pf_under_20": 0.38,
+                        "pf_20_to_50": 0.46,
+                        "pf_over_50": 0.48
                     },
                     "CZ6": {
-                        "group_r": 0.48,
-                        "all_other": 0.48
+                        "pf_under_20": 0.40,
+                        "pf_20_to_50": 0.48,
+                        "pf_over_50": 0.64
                     }
                 }
             },
@@ -266,16 +272,19 @@
                 },
                 "shgc": {
                     "CZ4": {
-                        "group_r": 0.43,
-                        "all_other": 0.43
+                        "pf_under_20": 0.36,
+                        "pf_20_to_50": 0.43,
+                        "pf_over_50": 0.58
                     },
                     "CZ5": {
-                        "group_r": 0.46,
-                        "all_other": 0.46
+                        "pf_under_20": 0.38,
+                        "pf_20_to_50": 0.46,
+                        "pf_over_50": 0.48
                     },
                     "CZ6": {
-                        "group_r": 0.48,
-                        "all_other": 0.48
+                        "pf_under_20": 0.40,
+                        "pf_20_to_50": 0.48,
+                        "pf_over_50": 0.64
                     }
                 }
             },
@@ -296,16 +305,19 @@
                 },
                 "shgc": {
                     "CZ4": {
-                        "group_r": 0.40,
-                        "all_other": 0.40
+                        "pf_under_20": 0.4,
+                        "pf_20_to_50": 0.4,
+                        "pf_over_50": 0.4
                     },
                     "CZ5": {
-                        "group_r": 0.40,
-                        "all_other": 0.40
+                        "pf_under_20": 0.4,
+                        "pf_20_to_50": 0.4,
+                        "pf_over_50": 0.4
                     },
                     "CZ6": {
-                        "group_r": 0.40,
-                        "all_other": 0.40
+                        "pf_under_20": 0.4,
+                        "pf_20_to_50": 0.4,
+                        "pf_over_50": 0.4
                     }
                 }
             }
