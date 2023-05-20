@@ -19,8 +19,8 @@ def get_baseline_u_value(
 ) -> float:
     """Get the baseline U-Value for the specified climate zone."""
     all_u_values = _baseline_code.get_window_u_values()
-    cz_uvalues = all_u_values.get_u_value_for_climate(_climate_zone.name)
-    u_value = cz_uvalues.get_u_values_for_use_group(_use_group.name)
+    cz_uvalues = all_u_values.get_u_value_for_climate(_climate_zone)
+    u_value = cz_uvalues.get_u_values_for_use_group(_use_group)
     return u_value
 
 
@@ -29,8 +29,8 @@ def get_baseline_SHGC(
 ) -> float:
     """Get the baseline SHGC for the specified climate zone and Projection Factor group."""
     all_shgcs = _baseline_code.get_window_shgcs()
-    cz_shgcs = all_shgcs.get_shgcs_for_climate(_climate_zone.name)
-    pf_shgc = cz_shgcs.get_shgc_for_pf(_pf_group.name)
+    cz_shgcs = all_shgcs.get_shgcs_for_climate(_climate_zone)
+    pf_shgc = cz_shgcs.get_shgc_for_pf(_pf_group)
     return pf_shgc
 
 

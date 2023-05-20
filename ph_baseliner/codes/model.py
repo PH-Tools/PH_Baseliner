@@ -7,7 +7,7 @@ from pydantic import BaseModel, validator
 from typing import Dict
 
 from ph_units.converter import convert
-from ph_baseliner.codes.options import ClimateZones, Use_Groups
+from ph_baseliner.codes.options import ClimateZones, Use_Groups, PF_Groups
 
 # -----------------------------------------------------------------------------
 
@@ -24,19 +24,20 @@ class TableMaximumUFactor_Values(BaseModel):
             setattr(v, field, val)
         return v
 
-    def get_u_values_for_use_group(self, _use_group_name: str) -> float:
+    def get_u_values_for_use_group(self, _use_group: Use_Groups) -> float:
         """Return the U-value for the given use group name.
 
         Args:
-            _use_group_name: The name of the use group to return the U-value for.
+            _use_group: Use_Groups:
+                The use group to return the U-value for.
         """
 
         try:
-            return getattr(self, _use_group_name)
+            return getattr(self, _use_group.name)
         except Exception as e:
             allowed_use_group_names = [_ for _ in self.__fields__]
             msg = (
-                f"Use Group: '{_use_group_name}' is not supported. "
+                f"Use Group: '{_use_group.name}' is not supported. "
                 f"Supported groups include only: {allowed_use_group_names}"
             )
             raise ValueError(msg, e)
@@ -54,19 +55,20 @@ class TableMaximumCFactor_Values(BaseModel):
             setattr(v, field, val)
         return v
 
-    def get_c_factor_for_use_group(self, _use_group_name: str) -> float:
+    def get_c_factor_for_use_group(self, _use_group: Use_Groups) -> float:
         """Return the C-Factor for the given use group name.
 
         Args:
-            _use_group_name: The name of the use group to return the C-Factor for.
+            _use_group: Use_Groups:
+                The name of the use group to return the C-Factor for.
         """
 
         try:
-            return getattr(self, _use_group_name)
+            return getattr(self, _use_group.name)
         except Exception as e:
             allowed_use_group_names = [_ for _ in self.__fields__]
             msg = (
-                f"Use Group: '{_use_group_name}' is not supported. "
+                f"Use Group: '{_use_group.name}' is not supported. "
                 f"Supported groups include only: {allowed_use_group_names}"
             )
             raise ValueError(msg, e)
@@ -84,19 +86,20 @@ class TableMaximumFFactor_Values(BaseModel):
             setattr(v, field, val)
         return v
 
-    def get_f_factor_for_use_group(self, _use_group_name: str) -> float:
+    def get_f_factor_for_use_group(self, _use_group: Use_Groups) -> float:
         """Return the F-Factor for the given use group name.
 
         Args:
-            _use_group_name: The name of the use group to return the F-Factor for.
+            _use_group: Use_Groups
+                The name of the use group to return the F-Factor for.
         """
 
         try:
-            return getattr(self, _use_group_name)
+            return getattr(self, _use_group.name)
         except Exception as e:
             allowed_use_group_names = [_ for _ in self.__fields__]
             msg = (
-                f"Use Group: '{_use_group_name}' is not supported. "
+                f"Use Group: '{_use_group.name}' is not supported. "
                 f"Supported groups include only: {allowed_use_group_names}"
             )
             raise ValueError(msg, e)
@@ -111,19 +114,20 @@ class TableMaximumSHGC_Values(BaseModel):
     def convert_units(cls, v: "TableMaximumSHGC_Values", **kwargs):
         return v
 
-    def get_shgc_for_pf(self, _pf_group_name: str) -> float:
+    def get_shgc_for_pf(self, _pf_group: PF_Groups) -> float:
         """Return the SHGC value for the given PF group name.
 
         Args:
-            _pf_group_name: The name of the PF group to return the SHGC for.
+            _pf_group: PF_Groups:
+                The PF group to return the SHGC for.
         """
 
         try:
-            return getattr(self, _pf_group_name)
+            return getattr(self, _pf_group.name)
         except Exception as e:
             allowed_pf_group_names = [_ for _ in self.__fields__]
             msg = (
-                f"Climate Zone: '{_pf_group_name}' is not supported. "
+                f"Climate Zone: '{_pf_group.name}' is not supported. "
                 f"Supported zones include only: {allowed_pf_group_names}"
             )
             raise ValueError(msg, e)
@@ -145,20 +149,21 @@ class TableMaximumUFactor_ClimateZones(BaseModel):
         return v
 
     def get_u_value_for_climate(
-        self, _climate_zone_name: str
+        self, _climate_zone: ClimateZones
     ) -> "TableMaximumUFactor_Values":
         """Return the U-Values for the given climate zone name.
 
         Args:
-            _climate_zone_name: The name of the climate zone to return the U-Values for.
+            _climate_zone: ClimateZones:
+                The name of the climate zone to return the U-Values for.
         """
 
         try:
-            return getattr(self, _climate_zone_name)
+            return getattr(self, _climate_zone.name)
         except Exception as e:
             allowed_climate_zone_names = [_ for _ in self.__fields__]
             msg = (
-                f"Climate Zone: '{_climate_zone_name}' is not supported. "
+                f"Climate Zone: '{_climate_zone.name}' is not supported. "
                 f"Supported zones include only: {allowed_climate_zone_names}"
             )
             raise ValueError(msg, e)
@@ -177,20 +182,21 @@ class TableMaximumCFactor_ClimateZones(BaseModel):
         return v
 
     def get_c_factor_for_climate(
-        self, _climate_zone_name: str
+        self, _climate_zone: ClimateZones
     ) -> "TableMaximumCFactor_Values":
         """Return the C-Factors for the given climate zone name.
 
         Args:
-            _climate_zone_name: The name of the climate zone to return the C-Factors for.
+            _climate_zone: ClimateZones
+                The name of the climate zone to return the C-Factors for.
         """
 
         try:
-            return getattr(self, _climate_zone_name)
+            return getattr(self, _climate_zone.name)
         except Exception as e:
             allowed_climate_zone_names = [_ for _ in self.__fields__]
             msg = (
-                f"Climate Zone: '{_climate_zone_name}' is not supported. "
+                f"Climate Zone: '{_climate_zone.name}' is not supported. "
                 f"Supported zones include only: {allowed_climate_zone_names}"
             )
             raise ValueError(msg, e)
@@ -209,20 +215,21 @@ class TableMaximumFFactor_ClimateZones(BaseModel):
         return v
 
     def get_f_factor_for_climate(
-        self, _climate_zone_name: str
+        self, _climate_zone: ClimateZones
     ) -> "TableMaximumFFactor_Values":
         """Return the F-Factors for the given climate zone name.
 
         Args:
-            _climate_zone_name: The name of the climate zone to return the F-Factors for.
+            _climate_zone: ClimateZones
+                The name of the climate zone to return the F-Factors for.
         """
 
         try:
-            return getattr(self, _climate_zone_name)
+            return getattr(self, _climate_zone.name)
         except Exception as e:
             allowed_climate_zone_names = [_ for _ in self.__fields__]
             msg = (
-                f"Climate Zone: '{_climate_zone_name}' is not supported. "
+                f"Climate Zone: '{_climate_zone.name}' is not supported. "
                 f"Supported zones include only: {allowed_climate_zone_names}"
             )
             raise ValueError(msg, e)
@@ -237,18 +244,21 @@ class TableMaximumSHGC_ClimateZones(BaseModel):
     def convert_units(cls, v: "TableMaximumSHGC_ClimateZones", **kwargs):
         return v
 
-    def get_shgcs_for_climate(self, _climate_zone_name: str) -> TableMaximumSHGC_Values:
+    def get_shgcs_for_climate(
+        self, _climate_zone: ClimateZones
+    ) -> TableMaximumSHGC_Values:
         """Get the SHGC values for a given climate zone.
 
         Args:
-            climate_zone (str): The name of the climate zone.
+            climate_zone: ClimateZones:
+                The name of the climate zone.
         """
         try:
-            return getattr(self, _climate_zone_name)
+            return getattr(self, _climate_zone.name)
         except Exception as e:
             allowed_climate_zone_names = [_ for _ in self.__fields__]
             msg = (
-                f"Climate Zone: '{_climate_zone_name}' is not supported. "
+                f"Climate Zone: '{_climate_zone.name}' is not supported. "
                 f"Supported zones include only: {allowed_climate_zone_names}"
             )
             raise ValueError(msg, e)
@@ -441,8 +451,8 @@ class BaselineCode(BaseModel):
     def get_baseline_roof_u_value(self, _cz: ClimateZones, _ug: Use_Groups) -> float:
         """Get the maximum roof U-value from the baseline code for a climate/use-group."""
         all_roof_u_values = self.get_roof_u_values()
-        cz_roof_u_values = all_roof_u_values.get_u_value_for_climate(_cz.name)
-        roof_u_value = cz_roof_u_values.get_u_values_for_use_group(_ug.name)
+        cz_roof_u_values = all_roof_u_values.get_u_value_for_climate(_cz)
+        roof_u_value = cz_roof_u_values.get_u_values_for_use_group(_ug)
         return roof_u_value
 
     def get_baseline_exposed_wall_u_value(
@@ -451,11 +461,9 @@ class BaselineCode(BaseModel):
         """Get the maximum exposed wall U-value from the baseline code for a climate/use-group."""
         all_exposed_wall_u_values = self.get_exposed_wall_u_values()
         cz_exposed_wall_u_values = all_exposed_wall_u_values.get_u_value_for_climate(
-            _cz.name
+            _cz
         )
-        exposed_wall_u_value = cz_exposed_wall_u_values.get_u_values_for_use_group(
-            _ug.name
-        )
+        exposed_wall_u_value = cz_exposed_wall_u_values.get_u_values_for_use_group(_ug)
         return exposed_wall_u_value
 
     def get_baseline_ground_wall_c_factor(
@@ -464,11 +472,9 @@ class BaselineCode(BaseModel):
         """Get the maximum ground wall C-Factor from the baseline code for a climate/use-group."""
         all_ground_wall_c_factors = self.get_ground_wall_c_factors()
         cz_ground_wall_c_factors = all_ground_wall_c_factors.get_c_factor_for_climate(
-            _cz.name
+            _cz
         )
-        ground_wall_c_factor = cz_ground_wall_c_factors.get_c_factor_for_use_group(
-            _ug.name
-        )
+        ground_wall_c_factor = cz_ground_wall_c_factors.get_c_factor_for_use_group(_ug)
         return ground_wall_c_factor
 
     def get_baseline_exposed_floor_u_value(
@@ -477,10 +483,10 @@ class BaselineCode(BaseModel):
         """Get the maximum exposed floor U-value from the baseline code for a climate/use-group."""
         all_exposed_floor_u_values = self.get_exposed_floor_u_values()
         cz_exposed_floor_u_values = all_exposed_floor_u_values.get_u_value_for_climate(
-            _cz.name
+            _cz
         )
         exposed_floor_u_value = cz_exposed_floor_u_values.get_u_values_for_use_group(
-            _ug.name
+            _ug
         )
         return exposed_floor_u_value
 
@@ -490,9 +496,9 @@ class BaselineCode(BaseModel):
         """Get the maximum ground floor F-Factor from the baseline code for a climate/use-group."""
         all_ground_floor_f_factors = self.get_ground_floor_f_factors()
         cz_ground_floor_f_factors = all_ground_floor_f_factors.get_f_factor_for_climate(
-            _cz.name
+            _cz
         )
         ground_floor_f_factor = cz_ground_floor_f_factors.get_f_factor_for_use_group(
-            _ug.name
+            _ug
         )
         return ground_floor_f_factor
