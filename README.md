@@ -32,3 +32,4 @@ be sure to make a backup copy before using this tool.
 ![Tests](https://github.com/PH-Tools/PHX/actions/workflows/ci.yaml/badge.svg )
 ![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
 [![IronPython](https://img.shields.io/badge/ironpython-2.7-red.svg)](https://github.com/IronLanguages/ironpython2/releases/tag/ipy-2.7.8/)
+![versions](https://img.shields.io/pypi/pyversions/pybadges.svg)
