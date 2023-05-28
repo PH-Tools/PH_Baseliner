@@ -31,3 +31,7 @@ def test_get_baseline_windows_shgc():
         baseline_code_model, ClimateZones.CZ5, PF_Groups.pf_20_to_50
     )
     assert shgc == 0.46
+    shgc = windows.get_baseline_SHGC(
+        baseline_code_model, ClimateZones.CZ6, PF_Groups.pf_20_to_50
+    )
+    assert shgc == 0.48
