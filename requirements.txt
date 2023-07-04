@@ -1,2 +1,5 @@
-ph_units>=1.1.0
+honeybee-core
+hoenybee-energy
+ph_units
+honeybee_ph
 PHX

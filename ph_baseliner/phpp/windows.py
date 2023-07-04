@@ -4,17 +4,17 @@
 """Functions to set baseline PHPP windows."""
 
 from PHX.PHPP import phpp_app
+from PHX.model.constructions import PhxConstructionWindow
 
 from ph_baseliner.codes.model import BaselineCode
 from ph_baseliner.codes.options import ClimateZones, PF_Groups, Use_Groups
 from ph_baseliner.phpp.components import (
     add_new_baseline_window_glazing,
     add_new_baseline_window_frame,
-    create_new_baseline_window_glazing,
 )
 
 
-def get_baseline_u_value(
+def get_baseline_window_u_value(
     _baseline_code: BaselineCode, _climate_zone: ClimateZones, _use_group: Use_Groups
 ) -> float:
     """Get the baseline U-Value for the specified climate zone."""
@@ -24,7 +24,7 @@ def get_baseline_u_value(
     return u_value
 
 
-def get_baseline_SHGC(
+def get_baseline_window_SHGC(
     _baseline_code: BaselineCode, _climate_zone: ClimateZones, _pf_group: PF_Groups
 ) -> float:
     """Get the baseline SHGC for the specified climate zone and Projection Factor group."""
@@ -52,11 +52,13 @@ def set_baseline_window_construction(
     """
 
     # -- Get the baseline values for U-Value and SHGC
-    u_value = get_baseline_u_value(_baseline_code, _climate_zone, _use_group)
-    shgc = get_baseline_SHGC(_baseline_code, _climate_zone, _pf_group)
+    u_value = get_baseline_window_u_value(_baseline_code, _climate_zone, _use_group)
+    shgc = get_baseline_window_SHGC(_baseline_code, _climate_zone, _pf_group)
 
     # -- Create the new baseline window construction
-    baseline_phx_window = create_new_baseline_window_glazing(u_value, shgc)
+    baseline_phx_window = PhxConstructionWindow.from_total_u_value(
+        u_value, shgc, "BASELINE: WINDOW"
+    )
     phpp_glazing_id = add_new_baseline_window_glazing(_phpp_conn, baseline_phx_window)
     phpp_frame_id = add_new_baseline_window_frame(_phpp_conn, baseline_phx_window)
 
@@ -79,10 +81,20 @@ def set_baseline_window_area(
         baseline_code: BaselineCode
             The BaselineCode object
     """
+
+    # -- As per NYS Code, C402.4.1 Maximum Area:
+    #
+    # > "The vertical fenestration area, not including opaque doors and
+    # > opaque spandrel panels, shall be not greater than 30
+    # > percent of the GROSS above-grade wall area."
+    #
+    # -- So be sure to use the GROSS wall area, BEFORE the windows
+    # -- have been punched out of them.
+
     maximum_wwr = _baseline_code.get_baseline_max_wwr()
-    current_wall_area = _phpp_conn.areas.get_total_wall_area()
+    current_net_wall_area = _phpp_conn.areas.get_total_net_wall_area()
     current_window_area = _phpp_conn.windows.get_total_window_area()
-    current_wwr = current_window_area / (current_wall_area + current_window_area)
+    current_wwr = current_window_area / (current_net_wall_area + current_window_area)
 
     if current_wwr < maximum_wwr:
         print(f"Current WWR {current_wwr:.2%} is less than maximum {maximum_wwr:.0%}.")
@@ -116,7 +128,7 @@ def set_baseline_skylight_area(
             The BaselineCode object
     """
     maximum_srr = _baseline_code.get_baseline_max_srr()
-    current_roof_area = _phpp_conn.areas.get_total_roof_area()
+    current_roof_area = _phpp_conn.areas.get_total_net_roof_area()
     current_skylight_area = _phpp_conn.windows.get_total_skylight_area()
     current_srr = current_skylight_area / (current_roof_area + current_skylight_area)
 

@@ -10,10 +10,10 @@ from PHX.model.enums.building import ComponentFaceType, ComponentExposureExterio
 from ph_baseliner.codes.model import BaselineCode
 from ph_baseliner.codes.options import ClimateZones, Use_Groups
 from ph_baseliner.phpp.u_values import (
-    create_baseline_constructions,
     add_baseline_constructions_to_phpp,
     BaselineConstructionPHPPids,
 )
+from ph_baseliner.phx.constructions import create_baseline_constructions
 
 
 def set_baseline_envelope_constructions(
