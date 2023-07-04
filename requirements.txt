@@ -1,5 +1,5 @@
-honeybee-core
-hoenybee-energy
-ph_units
-honeybee_ph
+honeybee-core>=1.55.16
+honeybee-energy>=1.100.3
+honeybee-ph>=1.18.1
+PH-units>=1.2.0
 PHX
