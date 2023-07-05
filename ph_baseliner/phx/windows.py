@@ -3,9 +3,10 @@
 
 """Functions to set baseline PHX Model windows."""
 
-from typing import Callable
+from typing import Callable, Dict
 
 from PHX.model.project import PhxProject
+from PHX.model.components import PhxComponentAperture
 from PHX.model.constructions import PhxConstructionWindow
 
 from ph_baseliner.codes.model import BaselineCode
@@ -44,18 +45,32 @@ def set_baseline_window_construction(
     u_value = get_baseline_window_u_value(_baseline_code, _climate_zone, _use_group)
     shgc = get_baseline_window_SHGC(_baseline_code, _climate_zone, _pf_group)
 
-    # -- Create the new baseline window construction
-    baseline_phx_window = PhxConstructionWindow.from_total_u_value(
-        u_value, shgc, "BASELINE: WINDOW"
-    )
+    # -- Collect all the unique window types in the PHX project
+    unique_window_types: Dict[str, PhxComponentAperture] = {}
+    for variant in _phx_project.variants:
+        for aperture_component in variant.building.aperture_components:
+            unique_window_types[aperture_component.unique_key] = aperture_component
 
-    # -- Add the new baseline window construction to the PHX project
-    _phx_project.add_new_window_type(baseline_phx_window)
+    # -- Create the new baseline window construction for each
+    for i, unique_window_type_key in enumerate(unique_window_types.keys(), start=1):
+        window_type = unique_window_types[unique_window_type_key]
+        baseline_phx_window = PhxConstructionWindow.from_total_u_value(
+            u_value, shgc, f"BASELINE: WINDOW {i :03}"
+        )
+        baseline_phx_window.id_num_shade = window_type.shade_type_id_num
+
+        # -- Add the new baseline window construction to the PHX project
+        _phx_project.add_new_window_type(
+            baseline_phx_window, _key=unique_window_type_key
+        )
 
     # -- Set the baseline window construction in the PHX project
     for variant in _phx_project.variants:
         for aperture_component in variant.building.aperture_components:
-            aperture_component.set_window_type(baseline_phx_window)
+            baseline_phx_window_type = _phx_project.get_window_type(
+                aperture_component.unique_key
+            )
+            aperture_component.set_window_type(baseline_phx_window_type)
 
     return _phx_project
 
