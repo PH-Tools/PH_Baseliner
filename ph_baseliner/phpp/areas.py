@@ -50,7 +50,7 @@ def set_baseline_envelope_constructions(
 def reset_phpp_areas_constructions(
     phpp_conn: phpp_app.PHPPConnection, construction_ids: BaselineConstructionPHPPids
 ) -> None:
-    """Reset the PHPP Areas worksheet to the baseline constructions."""
+    """Reset the PHPP Areas worksheet rows to the baseline constructions."""
 
     def row_is_exposed_wall(row_data: ExistingSurfaceRow) -> bool:
         """Exposed wall is a wall that is not a ground floor."""
@@ -88,7 +88,7 @@ def reset_phpp_areas_constructions(
         )
 
     for i, surface_row_data in phpp_conn.areas.surfaces.all_surface_rows:
-        if surface_row_data.no_name:
+        if surface_row_data.is_empty:
             continue
 
         if row_is_roof(surface_row_data):

@@ -94,18 +94,22 @@ def set_baseline_window_area(
     maximum_wwr = _baseline_code.get_baseline_max_wwr()
     current_net_wall_area = _phpp_conn.areas.get_total_net_wall_area()
     current_window_area = _phpp_conn.windows.get_total_window_area()
-    current_wwr = current_window_area / (current_net_wall_area + current_window_area)
+    total_gross_wall_area = current_net_wall_area + current_window_area
+    current_wwr = current_window_area / total_gross_wall_area
 
     if current_wwr < maximum_wwr:
-        print(f"Current WWR {current_wwr:.2%} is less than maximum {maximum_wwr:.0%}.")
+        print(
+            f"Current WWR {current_wwr.value :.2%} is less than maximum {maximum_wwr :.0%}."
+        )
         return None
 
     print(
-        f"Current WWR {current_wwr:.2%} is greater than maximum {maximum_wwr:.0%}. Scaling windows."
+        f"Current WWR {current_wwr.value :.2%} is greater than "
+        f"maximum {maximum_wwr :.0%}. Scaling windows."
     )
 
     # -- Figure out the right scale factor
-    scale_factor = maximum_wwr / current_wwr
+    scale_factor = maximum_wwr / current_wwr.value
 
     # -- Scale the window areas
     for row_num in _phpp_conn.windows.used_window_row_numbers:
@@ -130,18 +134,22 @@ def set_baseline_skylight_area(
     maximum_srr = _baseline_code.get_baseline_max_srr()
     current_roof_area = _phpp_conn.areas.get_total_net_roof_area()
     current_skylight_area = _phpp_conn.windows.get_total_skylight_area()
-    current_srr = current_skylight_area / (current_roof_area + current_skylight_area)
+    total_gross_roof_area = current_roof_area + current_skylight_area
+    current_srr = current_skylight_area / total_gross_roof_area
 
     if current_srr < maximum_srr:
-        print(f"Current SRR {current_srr:.2%} is less than maximum {maximum_srr:.0%}.")
+        print(
+            f"Current SRR {current_srr.value :.2%} is less than maximum {maximum_srr :.0%}."
+        )
         return None
 
     print(
-        f"Current SRR {current_srr:.2%} is greater than maximum {maximum_srr:.0%}. Scaling Skylights."
+        f"Current SRR {current_srr.value :.2%} is greater than "
+        f"maximum {maximum_srr :.0%}. Scaling Skylights."
     )
 
     # -- Figure out the right scale factor
-    scale_factor = maximum_srr / current_srr
+    scale_factor = maximum_srr / current_srr.value
 
     # -- Scale the window areas
     for row_num in _phpp_conn.windows.used_window_row_numbers:

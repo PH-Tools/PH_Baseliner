@@ -366,7 +366,7 @@ class TableLightingLPDAreaMethod(BaseModel):
     def convert_units(cls, v: Dict, values: Dict):
         units = values["units"]
         for key, val in v.items():
-            v[key] = convert(val, units, "W/m2")
+            v[key] = convert(val, units, "W/M2")
         return v
 
 
