@@ -43,17 +43,26 @@ def set_baseline_window_construction(
 ) -> PhxProject:
     # -- Get the baseline values for U-Value and SHGC
     u_value = get_baseline_window_u_value(_baseline_code, _climate_zone, _use_group)
+    _output(f"Using baseline window U-Value: {u_value :.3f} for all windows.")
+
     shgc = get_baseline_window_SHGC(_baseline_code, _climate_zone, _pf_group)
+    _output(f"Using baseline window SHGC: {shgc :.2f} for all windows.")
+    
 
-    # -- Collect all the unique window types in the PHX project
-    unique_window_types: Dict[str, PhxComponentAperture] = {}
+    # -----------------------------------------------------------------------------------
+    # -- Collect all the unique 'PhxComponentAperture' types in the PHX project
+    _output(f"Collecting the unique '{PhxComponentAperture.__name__}' types in the PHX-Project: '{_phx_project.name}'.")
+    unique_aperture_types: Dict[str, PhxComponentAperture] = {}
     for variant in _phx_project.variants:
-        for aperture_component in variant.building.aperture_components:
-            unique_window_types[aperture_component.unique_key] = aperture_component
+        for ap in variant.building.aperture_components:
+            unique_aperture_types[ap.unique_key] = ap
 
-    # -- Create the new baseline window construction for each
-    for i, unique_window_type_key in enumerate(unique_window_types.keys(), start=1):
-        window_type = unique_window_types[unique_window_type_key]
+
+    # -----------------------------------------------------------------------------------
+    # -- Create a new baseline 'PhxConstructionWindow' for each of the unique 'PhxComponentAperture' types
+    _output(f"Creating a new baseline '{PhxConstructionWindow.__name__}' for each unique '{PhxComponentAperture.__name__}' type.")
+    for i, unique_window_type_key in enumerate(unique_aperture_types.keys(), start=1):
+        window_type = unique_aperture_types[unique_window_type_key]
         baseline_phx_window = PhxConstructionWindow.from_total_u_value(
             u_value, shgc, f"BASELINE: WINDOW {i :03}"
         )
@@ -64,13 +73,16 @@ def set_baseline_window_construction(
             baseline_phx_window, _key=unique_window_type_key
         )
 
-    # -- Set the baseline window construction in the PHX project
+
+    # -----------------------------------------------------------------------------------
+    # -- Set the baseline PhxComponentAperture's 'PhxConstructionWindow'
+    _output(f"Setting all '{PhxConstructionWindow.__name__}' to the baseline types.")
     for variant in _phx_project.variants:
-        for aperture_component in variant.building.aperture_components:
+        for ap in variant.building.aperture_components:
             baseline_phx_window_type = _phx_project.get_window_type(
-                aperture_component.unique_key
+                ap.unique_key
             )
-            aperture_component.set_window_type(baseline_phx_window_type)
+            ap.set_window_type(baseline_phx_window_type)
 
     return _phx_project
 
